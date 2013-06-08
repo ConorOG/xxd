@@ -217,7 +217,7 @@ static void xxdline __P((FILE *, char *, int));
 
 #define TRY_SEEK	/* attempt to use lseek, or skip forward by reading */
 #define COLS 256	/* change here, if you ever need more columns */
-#define LLEN (11 + (9*COLS-1)/1 + COLS + 2)
+#define LLEN (12 + (9*COLS-1) + COLS + 2)
 
 char hexxa[] = "0123456789abcdef0123456789ABCDEF", *hexx = hexxa;
 
@@ -813,32 +813,33 @@ main(argc, argv)
     {
       if (p == 0)
 	{
-	  sprintf(l, "%07lx: ", n + seekoff + displayoff);
+	  sprintf(l, "%08lx:",
+	    ((unsigned long)(n + seekoff + displayoff)) & 0xffffffff);
 	  for (c = 9; c < LLEN; l[c++] = ' ');
 	}
       if (hextype == HEX_NORMAL)
 	{
-	  l[c = (9 + (grplen * p) / octspergrp)] = hexx[(e >> 4) & 0xf];
-	  l[++c]			       = hexx[ e       & 0xf];
+	  l[c = (10 + (grplen * p) / octspergrp)] = hexx[(e >> 4) & 0xf];
+	  l[++c]				  = hexx[ e       & 0xf];
 	}
       else if (hextype == HEX_LITTLEENDIAN)
 	{
 	  int x = (p & ~(octspergrp-1)) | (~p & (octspergrp-1));
-	  l[c = (9 + (grplen * x) / octspergrp)] = hexx[(e >> 4) & 0xf];
-	  l[++c]			       = hexx[ e       & 0xf];
+	  l[c = (10 + (grplen * x) / octspergrp)] = hexx[(e >> 4) & 0xf];
+	  l[++c]				  = hexx[ e       & 0xf];
 	}
       else /* hextype == HEX_BITS */
 	{
 	  int i;
 
-	  c = (9 + (grplen * p) / octspergrp) - 1;
+	  c = (10 + (grplen * p) / octspergrp) - 1;
 	  for (i = 7; i >= 0; i--)
 	    l[++c] = (e & (1 << i)) ? '1' : '0';
 	}
       if (ebcdic)
 	e = (e < 64) ? '.' : etoa64[e-64];
       /* When changing this update definition of LLEN above. */
-      l[11 + (grplen * cols - 1)/octspergrp + p] =
+      l[12 + (grplen * cols - 1)/octspergrp + p] =
 #ifdef __MVS__
 	  (e >= 64)
 #else
@@ -850,7 +851,7 @@ main(argc, argv)
       n++;
       if (++p == cols)
 	{
-	  l[c = (11 + (grplen * cols - 1)/octspergrp + p)] = '\n'; l[++c] = '\0';
+	  l[c = (12 + (grplen * cols - 1)/octspergrp + p)] = '\n'; l[++c] = '\0';
 	  xxdline(fpo, l, autoskip ? nonzero : 1);
 	  nonzero = 0;
 	  p = 0;
@@ -860,7 +861,7 @@ main(argc, argv)
     die(2);
   if (p)
     {
-      l[c = (11 + (grplen * cols - 1)/octspergrp + p)] = '\n'; l[++c] = '\0';
+      l[c = (12 + (grplen * cols - 1)/octspergrp + p)] = '\n'; l[++c] = '\0';
       xxdline(fpo, l, 1);
     }
   else if (autoskip)
