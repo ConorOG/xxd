@@ -51,7 +51,7 @@
  * 16.05.00 Improved MMS file and merge for VMS by Zoltan Arpadffy
  * March 2011 Better error handling by Florian Zumbiehl.
  * April 2011 Formatting by Bram Moolenaar
- * 08.06.2013 Little-endian hexdump (-e) by Vadim Vygonets.
+ * 08.06.2013 Little-endian hexdump (-e) and offset (-o) by Vadim Vygonets.
  *
  * (c) 1990-1998 by Juergen Weigert (jnweiger@informatik.uni-erlangen.de)
  *
@@ -245,6 +245,7 @@ exit_with_usage()
   fprintf(stderr, "    -h          print this summary.\n");
   fprintf(stderr, "    -i          output in C include file style.\n");
   fprintf(stderr, "    -l len      stop after <len> octets.\n");
+  fprintf(stderr, "    -o off      add <off> to the displayed file position.\n");
   fprintf(stderr, "    -ps         output in postscript plain hexdump style.\n");
   fprintf(stderr, "    -r          reverse operation: convert (or patch) hexdump into binary.\n");
   fprintf(stderr, "    -r -s off   revert with <off> added to file positions found in hexdump.\n");
@@ -478,7 +479,7 @@ main(argc, argv)
   int ebcdic = 0;
   int octspergrp = -1;	/* number of octets grouped in output */
   int grplen;		/* total chars per octet group */
-  long length = -1, n = 0, seekoff = 0;
+  long length = -1, n = 0, seekoff = 0, displayoff = 0;
   static char l[LLEN+1];  /* static because it may be too big for stack */
   char *pp;
 
@@ -539,6 +540,19 @@ main(argc, argv)
 	      if (!argv[2])
 		exit_with_usage();
 	      octspergrp = (int)strtol(argv[2], NULL, 0);
+	      argv++;
+	      argc--;
+	    }
+	}
+      else if (!STRNCMP(pp, "-o", 2))
+	{
+	  if (pp[2] && STRNCMP("ffset", pp + 2, 5))
+	    displayoff = (int)strtol(pp + 2, NULL, 0);
+	  else
+	    {
+	      if (!argv[2])
+		exit_with_usage();
+	      displayoff = (int)strtol(argv[2], NULL, 0);
 	      argv++;
 	      argc--;
 	    }
@@ -799,7 +813,7 @@ main(argc, argv)
     {
       if (p == 0)
 	{
-	  sprintf(l, "%07lx: ", n + seekoff);
+	  sprintf(l, "%07lx: ", n + seekoff + displayoff);
 	  for (c = 9; c < LLEN; l[c++] = ' ');
 	}
       if (hextype == HEX_NORMAL)
