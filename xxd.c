@@ -142,7 +142,7 @@ extern void perror __P((char *));
 extern long int strtol();
 extern long int ftell();
 
-char version[] = "xxd V1.10 27oct98 by Juergen Weigert";
+char version[] = "xxd v1.11, 8 jun 2013 by Juergen Weigert et al.";
 #ifdef WIN32
 char osver[] = " (Win32)";
 #else
