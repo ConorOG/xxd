@@ -643,8 +643,15 @@ main(argc, argv)
       exit(1);
     }
 
-  if (octspergrp < 1)
+  if (octspergrp < 1 || octspergrp > cols)
     octspergrp = cols;
+  else if (hextype == HEX_LITTLEENDIAN && (octspergrp & (octspergrp-1)))
+    {
+      fprintf(stderr,
+	      "%s: number of octets per group must be a power of 2 with -e.\n",
+	      pname);
+      exit(1);
+    }
 
   if (argc > 3)
     exit_with_usage();
@@ -824,7 +831,7 @@ main(argc, argv)
 	}
       else if (hextype == HEX_LITTLEENDIAN)
 	{
-	  int x = (p & ~(octspergrp-1)) | (~p & (octspergrp-1));
+	  int x = p ^ (octspergrp-1);
 	  l[c = (10 + (grplen * x) / octspergrp)] = hexx[(e >> 4) & 0xf];
 	  l[++c]				  = hexx[ e       & 0xf];
 	}
