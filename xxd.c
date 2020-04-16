@@ -744,7 +744,7 @@ main(int argc, char *argv[])
     {
       if (fp != stdin)
 	{
-	  FPRINTF_OR_DIE((fpo, "unsigned char %s", isdigit((int)argv[1][0]) ? "__" : ""));
+	  FPRINTF_OR_DIE((fpo, "const unsigned char %s", isdigit((int)argv[1][0]) ? "__" : ""));
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
 	    putc_or_die(isalnum(c) ? CONDITIONAL_CAPITALIZE(c) : '_', fpo);
 	  fputs_or_die("[] = {\n", fpo);
@@ -765,7 +765,7 @@ main(int argc, char *argv[])
       if (fp != stdin)
 	{
 	  fputs_or_die("};\n", fpo);
-	  FPRINTF_OR_DIE((fpo, "unsigned int %s", isdigit((int)argv[1][0]) ? "__" : ""));
+	  FPRINTF_OR_DIE((fpo, "const unsigned int %s", isdigit((int)argv[1][0]) ? "__" : ""));
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
 	    putc_or_die(isalnum(c) ? CONDITIONAL_CAPITALIZE(c) : '_', fpo);
 	  FPRINTF_OR_DIE((fpo, "_%s = %d;\n", capitalize ? "LEN" : "len", p));
