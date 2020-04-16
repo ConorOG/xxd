@@ -735,7 +735,7 @@ main(argc, argv)
     {
       if (fp != stdin)
 	{
-	  if (fprintf(fpo, "unsigned char %s", isdigit((int)argv[1][0]) ? "__" : "") < 0)
+	  if (fprintf(fpo, "const unsigned char %s", isdigit((int)argv[1][0]) ? "__" : "") < 0)
 	    die(3);
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
 	    if (putc(isalnum(c) ? c : '_', fpo) == EOF)
@@ -763,7 +763,7 @@ main(argc, argv)
 
       if (fp != stdin)
 	{
-	  if (fprintf(fpo, "unsigned int %s", isdigit((int)argv[1][0]) ? "__" : "") < 0)
+	  if (fprintf(fpo, "const unsigned int %s", isdigit((int)argv[1][0]) ? "__" : "") < 0)
 	    die(3);
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
 	    if (putc(isalnum(c) ? c : '_', fpo) == EOF)
